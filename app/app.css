@@ -1,0 +1,192 @@
+@import "tailwindcss";
+@import "@fontsource/lilita-one/400.css";
+@import "@fontsource-variable/nunito/index.css";
+
+/* ==========================================================================
+   Drama Kids Canterbury — design system
+   Every colour, font, size, radius and shadow lives here. Components only
+   use these tokens (via Tailwind classes or var(--…)), never raw values.
+   ========================================================================== */
+
+@theme {
+  /* ---- Colour: brand (taken from the logo) ---- */
+  --color-teal: #19b4c2;
+  --color-teal-deep: #0b7480; /* teal text on light backgrounds (AA) */
+  --color-magenta: #d81b7f;
+  --color-magenta-deep: #a3125e;
+  --color-blue: #1e8fe6;
+  --color-blue-deep: #1366b0;
+  --color-spotlight: #ffc83d; /* gold accent: CTAs, bulbs, stars */
+  --color-spotlight-deep: #e8a400;
+
+  /* ---- Colour: theatre ---- */
+  --color-velvet: #8e1052; /* curtain */
+  --color-velvet-dark: #4a0729;
+  --color-stage: #0e0b1f; /* midnight stage — dark sections */
+  --color-stage-2: #1a1433; /* raised surfaces on dark */
+  --color-stage-3: #2a2152;
+  --color-mist: #cbc5e8; /* secondary text on dark (AA on stage) */
+
+  /* ---- Colour: light sections ---- */
+  --color-cream: #fff8ee;
+  --color-cream-2: #f7ecdc;
+  --color-paper: #ffffff;
+  --color-ink: #1a1630; /* body text */
+  --color-ink-soft: #4a4566; /* secondary text on light (AA) */
+  --color-line: #e6dccb;
+
+  /* ---- Type ---- */
+  --font-display: "Lilita One", "Arial Rounded MT Bold", system-ui, sans-serif;
+  --font-body: "Nunito Variable", "Nunito", system-ui, sans-serif;
+  --font-grunge: "Lilita One", system-ui, sans-serif; /* eyebrow labels */
+
+  /* Fluid type scale: smallest at 360px, grows gently, capped from ~1440px so big monitors don't get giant text */
+  --text-eyebrow: clamp(0.75rem, 0.72rem + 0.12vw, 0.85rem);
+  --text-eyebrow--letter-spacing: 0.14em;
+  --text-body: clamp(0.975rem, 0.95rem + 0.12vw, 1.0625rem);
+  --text-body--line-height: 1.65;
+  --text-lead: clamp(1.05rem, 1rem + 0.25vw, 1.2rem);
+  --text-lead--line-height: 1.55;
+  --text-h4: clamp(1.15rem, 1.08rem + 0.3vw, 1.375rem);
+  --text-h4--line-height: 1.15;
+  --text-h3: clamp(1.35rem, 1.2rem + 0.6vw, 1.8rem);
+  --text-h3--line-height: 1.1;
+  --text-h2: clamp(1.75rem, 1.4rem + 1.5vw, 2.75rem);
+  --text-h2--line-height: 1.04;
+  --text-h1: clamp(2.1rem, 1.6rem + 2.2vw, 3.6rem);
+  --text-h1--line-height: 1;
+  --text-display: clamp(2.3rem, 1.7rem + 2.6vw, 4.1rem);
+  --text-display--line-height: 0.95;
+
+  /* ---- Spacing ---- */
+  --spacing-gutter: clamp(1rem, 0.5rem + 2vw, 2rem);
+  --spacing-section: clamp(3.5rem, 2.5rem + 4vw, 6.5rem);
+  --spacing-nav: 4.25rem;
+  --container-site: 76rem;
+
+  /* ---- Radius ---- */
+  --radius-chip: 0.6rem;
+  --radius-card: 1.5rem;
+  --radius-blob: 2rem;
+
+  /* ---- Shadows ---- */
+  --shadow-card: 0 1px 2px rgb(26 22 48 / 0.06), 0 12px 32px -12px rgb(26 22 48 / 0.18);
+  --shadow-lift: 0 2px 4px rgb(26 22 48 / 0.08), 0 28px 48px -16px rgb(26 22 48 / 0.3);
+  --shadow-pop: 4px 4px 0 0 var(--color-ink); /* chunky, playful */
+  --shadow-pop-sm: 3px 3px 0 0 var(--color-ink);
+  --shadow-glow: 0 0 0 1px rgb(255 200 61 / 0.4), 0 0 32px 4px rgb(255 200 61 / 0.35);
+  --shadow-stage: 0 30px 80px -20px rgb(0 0 0 / 0.65);
+
+  /* ---- Motion (CSS-side; GSAP defaults live in app/lib/gsap.ts) ---- */
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-back: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ---- Base ---- */
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-padding-top: calc(var(--spacing-nav) + 1rem);
+  }
+  body {
+    background: var(--color-cream);
+    color: var(--color-ink);
+    font-family: var(--font-body);
+    font-size: var(--text-body);
+    line-height: var(--text-body--line-height);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    overflow-x: clip;
+  }
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    letter-spacing: 0.005em;
+    text-wrap: balance;
+  }
+  p { text-wrap: pretty; }
+  img, video, svg { display: block; max-width: 100%; }
+  :focus-visible {
+    outline: 3px solid var(--color-spotlight);
+    outline-offset: 3px;
+    border-radius: 6px;
+  }
+  .on-light :focus-visible { outline-color: var(--color-blue-deep); }
+  ::selection { background: var(--color-spotlight); color: var(--color-ink); }
+}
+
+/* ---- Lenis (smooth scroll) ---- */
+html.lenis, html.lenis body { height: auto; }
+.lenis:not(.lenis-autoToggle).lenis-stopped { overflow: clip; }
+.lenis [data-lenis-prevent] { overscroll-behavior: contain; }
+
+/* ---- Utilities built from tokens ---- */
+@utility container-site {
+  width: 100%;
+  max-width: var(--container-site);
+  margin-inline: auto;
+  padding-inline: var(--spacing-gutter);
+}
+@utility section-y {
+  padding-block: var(--spacing-section);
+}
+@utility eyebrow {
+  font-family: var(--font-grunge);
+  font-size: var(--text-eyebrow);
+  letter-spacing: var(--text-eyebrow--letter-spacing);
+  text-transform: uppercase;
+}
+/* Dotted "ticket stub" border, borrowed from theatre tickets */
+@utility border-ticket {
+  border: 3px dotted currentColor;
+}
+/* Perforated edge (used on ticket cards) — punched circles on left/right.
+   Set --perf-y to line the holes up with the tear-off line. */
+@utility perforated {
+  --hole: 11px;
+  mask:
+    radial-gradient(circle var(--hole) at 0 var(--perf-y, 50%), #0000 98%, #000) left / 51% 100% no-repeat,
+    radial-gradient(circle var(--hole) at 100% var(--perf-y, 50%), #0000 98%, #000) right / 51% 100% no-repeat;
+}
+/* Subtle film-grain/velvet texture for dark sections */
+@utility stage-texture {
+  background-image:
+    radial-gradient(120% 80% at 50% -10%, rgb(142 16 82 / 0.35), transparent 60%),
+    radial-gradient(90% 60% at 100% 100%, rgb(25 180 194 / 0.16), transparent 60%);
+}
+@utility sr-only-focusable {
+  position: absolute;
+  width: 1px; height: 1px; overflow: hidden;
+  clip: rect(0 0 0 0); white-space: nowrap;
+  &:focus { position: fixed; top: 1rem; left: 1rem; width: auto; height: auto; clip: auto; z-index: 100; }
+}
+
+/* Velvet curtain fabric: vertical folds made with gradients (no images) */
+@utility velvet {
+  background-color: var(--color-velvet);
+  background-image:
+    repeating-linear-gradient(90deg,
+      rgb(0 0 0 / 0.38) 0px, rgb(0 0 0 / 0.05) 18px, rgb(255 255 255 / 0.08) 34px,
+      rgb(0 0 0 / 0.05) 50px, rgb(0 0 0 / 0.38) 68px),
+    linear-gradient(180deg, rgb(0 0 0 / 0.25), transparent 30%, transparent 75%, rgb(0 0 0 / 0.45));
+}
+
+/* Curtain intro: only shown when the inline <head> script marks it pending.
+   If the app JS never loads, a CSS fallback clears it after a moment. */
+.intro-pending .intro-root {
+  display: block;
+  animation: intro-fallback 0.4s ease 3.2s forwards;
+}
+@keyframes intro-fallback { to { opacity: 0; visibility: hidden; } }
+
+/* SplitText masks need overflow clip so lines slide up from "behind" */
+.split-line-mask { padding-bottom: 0.08em; margin-bottom: -0.08em; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
