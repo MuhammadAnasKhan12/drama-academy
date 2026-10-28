@@ -17,9 +17,9 @@ export function UpcomingShows() {
       <div className="container-site">
         <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
           <SectionHeading
-            eyebrow="Coming soon to a stage near you"
+            eyebrow="End-of-term performances"
             title={<span id="shows-title">Upcoming shows</span>}
-            intro="Three productions a year, with a part for every child who wants one. Hover or tap a ticket to see dates and times."
+            intro="The autumn and summer terms each end with a live performance, with a part for every child. Hover or tap a ticket for details."
           />
           <Link to="/shows" className="group inline-flex shrink-0 items-center gap-2 font-bold text-magenta-deep hover:underline">
             All shows & past productions <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />

@@ -19,7 +19,7 @@ export function MobileCtaBar() {
     >
       <div className="flex items-center gap-2">
         <ButtonLink to="/book" className="flex-1 shadow-none" variant="primary">
-          Book a Free Trial
+          Book now
         </ButtonLink>
         <a href={site.contact.whatsapp} aria-label="Message us on WhatsApp" className="grid size-11 place-items-center rounded-full bg-[#25D366] text-stage">
           <WhatsAppIcon className="size-6" />

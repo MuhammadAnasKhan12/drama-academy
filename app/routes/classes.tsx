@@ -4,7 +4,7 @@ import { seo } from "~/lib/seo";
 export const meta = () =>
   seo({
     title: "Kids drama classes in Canterbury",
-    description: "Weekly drama classes in Canterbury for ages 4–16: Mini Stars, Juniors and Seniors. Book a free trial class today.",
+    description: "Wednesday Drama Club in Canterbury for ages 4–11, 4–5pm at Ash Village Hall. £10.50 a session — book online.",
     path: "/classes",
   });
 

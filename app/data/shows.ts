@@ -1,67 +1,43 @@
 /**
- * ✏️ Shows and productions.
- * Paste the ticket link into ticketUrl when tickets go on sale (null shows "Tickets coming soon").
- * [PLACEHOLDER] titles, dates and venues are examples.
+ * ✏️ Performances. The flyer says the autumn and summer terms each end with a live performance.
+ * Paste a ticket link into ticketUrl if tickets are sold (null shows "Details to follow").
+ * [PLACEHOLDER] dates, times and venue — confirm with the client.
  */
 import type { PastShow, Show } from "./types";
 
 export const shows: Show[] = [
   {
-    id: "snow-queen-2026",
-    title: "The Snow Queen",
-    strapline: "A frosty fairytale of friendship and courage",
+    id: "autumn-performance-2026",
+    title: "Autumn Term Performance",
+    strapline: "An original play celebrating diversity in literature",
     description:
-      "Gerda sets off across a frozen kingdom to rescue her best friend Kai in our Christmas production — with snowstorms, talking reindeer and a whole lot of heart.",
-    performances: [
-      { date: "2026-12-12", time: "14:00" },
-      { date: "2026-12-12", time: "18:00" },
-      { date: "2026-12-13", time: "14:00" },
-    ],
-    venue: "[PLACEHOLDER] Theatre name, Canterbury",
-    priceFrom: 9,
+      "This term our Wednesday Drama Club has been creating an original play script that celebrates the rich diversity within literature. Families are invited to the live performance at the end of term.",
+    performances: [{ date: "2026-12-16", time: "16:00" }],
+    venue: "Ash Village Hall",
+    priceFrom: 0,
     ticketUrl: null,
-    cast: "Juniors & Seniors",
+    cast: "Wednesday Drama Club",
     tone: "blue",
-    icon: "snowflake",
+    icon: "feather",
   },
   {
-    id: "alice-2027",
-    title: "Alice: Down the Rabbit Hole",
-    strapline: "Curiouser and curiouser…",
+    id: "summer-production-2027",
+    title: "Summer Production",
+    strapline: "Our spectacular end-of-year show",
     description:
-      "Tea parties, card soldiers and a very late rabbit. Our Mini Stars and Juniors tumble into Wonderland for a spring show full of colour and nonsense.",
-    performances: [
-      { date: "2027-03-20", time: "14:00" },
-      { date: "2027-03-20", time: "17:30" },
-    ],
-    venue: "[PLACEHOLDER] Theatre name, Canterbury",
-    priceFrom: 8,
+      "The summer term builds to a spectacular production, with a part for every child. A brilliant way to celebrate everything they've learned this year.",
+    performances: [{ date: "2027-07-14", time: "16:00" }],
+    venue: "Ash Village Hall",
+    priceFrom: 0,
     ticketUrl: null,
-    cast: "Mini Stars & Juniors",
+    cast: "Wednesday Drama Club",
     tone: "magenta",
-    icon: "rabbit",
-  },
-  {
-    id: "pied-piper-2027",
-    title: "The Pied Piper of Canterbury",
-    strapline: "A brand-new musical, written by our Seniors",
-    description:
-      "Rats in the Cathedral! A Canterbury twist on the classic tale, devised and written by our Seniors, with original songs.",
-    performances: [
-      { date: "2027-07-10", time: "14:00" },
-      { date: "2027-07-10", time: "19:00" },
-    ],
-    venue: "[PLACEHOLDER] Theatre name, Canterbury",
-    priceFrom: 10,
-    ticketUrl: null,
-    cast: "The whole academy",
-    tone: "teal",
-    icon: "music",
+    icon: "crown",
   },
 ];
 
+/** [PLACEHOLDER] examples — replace with real past productions and photos */
 export const pastShows: PastShow[] = [
-  { id: "wind-willows-2026", title: "The Wind in the Willows", year: 2026, note: "Summer production", photos: ["runningGame", "drumGame"] },
-  { id: "robin-hood-2025", title: "Robin Hood & the Merry Band", year: 2025, note: "Christmas production", photos: ["huddle", "warmupCircle"] },
-  { id: "peter-pan-2025", title: "Peter Pan", year: 2025, note: "Summer production", photos: ["musicGuitar", "storyCircle"] },
+  { id: "summer-2026", title: "Summer Production 2026", year: 2026, note: "Summer term", photos: ["runningGame", "drumGame"] },
+  { id: "autumn-2025", title: "Autumn Performance 2025", year: 2025, note: "Autumn term", photos: ["huddle", "warmupCircle"] },
 ];

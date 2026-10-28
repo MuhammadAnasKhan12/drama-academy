@@ -108,7 +108,7 @@ export function MobileMenu({ returnFocusTo }: { returnFocusTo: RefObject<HTMLBut
         </ul>
         <div data-menu-item className="mt-8">
           <ButtonLink to="/book" size="lg" className="w-full sm:w-auto">
-            Book a Free Trial
+            Book now
           </ButtonLink>
         </div>
         <div data-menu-item className="mt-auto flex flex-wrap gap-x-6 gap-y-3 pt-10 text-mist">

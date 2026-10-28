@@ -64,7 +64,7 @@ export function Navbar() {
               <div className="hidden md:block">
                 <MagneticButton strength={0.25}>
                   <ButtonLink to="/book" variant="primary">
-                    Book a Free Trial
+                    Book now
                   </ButtonLink>
                 </MagneticButton>
               </div>

@@ -32,17 +32,17 @@ export function FinalCta() {
       <Sparkles className="z-[1]" />
 
       <div className="container-site relative z-[6] mx-auto max-w-3xl px-[18vw] sm:px-[14vw] md:px-gutter">
-        <p className="eyebrow text-spotlight">Your free trial awaits</p>
+        <p className="eyebrow text-spotlight">Places are limited</p>
         <SplitHeading className="mt-3 text-h1 text-cream">
           <span id="cta-title">Ready for the spotlight?</span>
         </SplitHeading>
         <p className="mx-auto mt-6 max-w-xl text-lead text-mist">
-          Come along to a free trial class — no commitment, no payment details. Just bring comfy clothes and a big imagination.
+          Book the Wednesday Drama Club or a holiday club online in a few minutes. Just bring comfy clothes and a big imagination.
         </p>
         <div className="mt-10 flex flex-col items-center justify-center gap-5 sm:flex-row">
           <MagneticButton strength={0.5}>
             <ButtonLink to="/book" size="lg" className="shadow-glow">
-              Book a Free Trial
+              Book now
             </ButtonLink>
           </MagneticButton>
           <ButtonAnchor href={site.contact.whatsapp} target="_blank" rel="noreferrer" size="lg" variant="ghost-light" icon={<WhatsAppIcon className="size-5" />}>

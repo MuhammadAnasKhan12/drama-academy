@@ -15,7 +15,7 @@ export const team: TeamMember[] = [
   },
   {
     name: "[Teacher name]",
-    role: "Mini Stars & Juniors Teacher",
+    role: "Wednesday Club Teacher",
     bio: "Musical-theatre graduate with a gift for turning shy first-timers into confident little performers. Plays a mean bongo.",
     dbs: true,
     firstAid: true,
@@ -24,8 +24,8 @@ export const team: TeamMember[] = [
   },
   {
     name: "[Teacher name]",
-    role: "Seniors Teacher & LAMDA Coach",
-    bio: "Has directed youth theatre across Kent for over a decade and coaches LAMDA students to distinctions.",
+    role: "Holiday Club Leader",
+    bio: "Has directed youth theatre across Kent for over a decade and loves turning a week of ideas into a showcase.",
     dbs: true,
     initials: "ST",
     tone: "blue",

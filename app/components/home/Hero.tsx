@@ -71,7 +71,7 @@ export function Hero() {
       <div className="container-site relative z-[6] grid items-center gap-10 pt-12 pb-20 md:pt-16 md:pb-24 lg:grid-cols-[1.15fr_1fr] lg:gap-10">
         <div className="max-w-2xl px-[4vw] sm:px-[6vw] lg:px-0 lg:pl-[4vw] min-[90rem]:pl-0">
           <p data-hero-fade className="eyebrow mb-5 text-spotlight">
-            Drama classes · Shows · Holiday camps
+            Weekly class · Holiday clubs · Workshops
           </p>
           <SplitHeading as="h1" trigger="ready" ready={ready} className="text-display text-cream">
             <span id="hero-title">
@@ -79,13 +79,13 @@ export function Hero() {
             </span>
           </SplitHeading>
           <p data-hero-fade className="mt-6 max-w-xl text-lead text-mist">
-            Weekly drama classes, real stage shows and holiday camps for ages {site.ages.min}–{site.ages.max}. Small groups, brilliant
+            A weekly Wednesday drama club, live end-of-term performances and holiday clubs for ages {site.ages.min}–{site.ages.max}. Brilliant
             DBS-checked teachers, and confidence that lasts long after the curtain falls.
           </p>
           <div data-hero-fade className="mt-8 flex flex-wrap items-center gap-4">
             <MagneticButton>
               <ButtonLink to="/book" size="lg">
-                Book a Free Trial
+                Book now
               </ButtonLink>
             </MagneticButton>
             <ButtonLink to="/classes" size="lg" variant="ghost-light" icon={<ArrowRight className="size-5" />}>
@@ -100,7 +100,7 @@ export function Hero() {
               <ShieldCheck className="size-4 text-teal" aria-hidden="true" /> DBS-checked team
             </li>
             <li className="inline-flex items-center gap-1.5">
-              <Users className="size-4 text-magenta" aria-hidden="true" /> Groups of 16 max
+              <Users className="size-4 text-magenta" aria-hidden="true" /> From £10.50 a session
             </li>
           </ul>
         </div>

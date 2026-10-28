@@ -25,7 +25,7 @@ const eventsLd = [
       startDate: `${p.date}T${p.time}:00+00:00`,
       eventStatus: "https://schema.org/EventScheduled",
       eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
-      location: venueLd,
+      location: venueLd("ashVillageHall"),
       organizer: { "@id": organisationLd["@id"] },
       offers: { "@type": "Offer", price: s.priceFrom, priceCurrency: "GBP", url: s.ticketUrl ?? `${site.url}/shows` },
     })),
@@ -33,16 +33,16 @@ const eventsLd = [
   ...camps.map((c) => ({
     "@context": "https://schema.org",
     "@type": "Event",
-    name: `${c.name} — drama holiday camp Canterbury`,
+    name: `${c.name} — drama holiday club Canterbury`,
     description: c.theme,
     startDate: c.startDate,
     endDate: c.endDate,
     eventStatus: "https://schema.org/EventScheduled",
     eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
-    location: venueLd,
+    location: venueLd(c.venue),
     organizer: { "@id": organisationLd["@id"] },
     typicalAgeRange: c.ages.replace("–", "-"),
-    offers: { "@type": "Offer", price: c.price, priceCurrency: "GBP", url: `${site.url}/holiday-camps` },
+    offers: { "@type": "Offer", price: c.price, priceCurrency: "GBP", url: `${site.url}/book` },
   })),
 ];
 
@@ -54,9 +54,9 @@ const faqLd = {
 
 export const meta = () =>
   seo({
-    title: "Drama Kids Canterbury | Kids Drama Classes, Shows & Holiday Camps in Kent",
+    title: "Drama Kids Canterbury | Kids Drama Classes & Holiday Clubs in Kent",
     description:
-      "Fun, confidence-building kids drama classes in Canterbury for ages 4–16. Weekly classes, real stage shows and drama holiday camps. Book a free trial today.",
+      "Fun, confidence-building kids drama in Canterbury for ages 4–11: a weekly Wednesday club (£10.50 a session) and drama holiday clubs from £25 a day. Book online.",
     path: "/",
     jsonLd: [organisationLd, faqLd, ...eventsLd],
   });

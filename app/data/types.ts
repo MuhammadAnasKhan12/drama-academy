@@ -12,8 +12,14 @@ export type DramaClass = {
   tone: Tone;
   day: string;
   time: string;
-  pricePerTerm: number;
+  /** Weekday number for date maths: 0 = Sunday … 3 = Wednesday */
+  weekday: number;
+  venue: VenueKey;
+  /** Price for one session; a term is charged per remaining session */
+  pricePerSession: number;
   groupSize: number;
+  /** Places available per term (used by the booking system) */
+  capacity: number;
   blurb: string;
   learn: string[];
   photo: PhotoKey;
@@ -23,13 +29,21 @@ export type Camp = {
   id: string;
   name: string;
   season: "Half-term" | "Easter" | "Summer" | "Christmas";
+  /** Course format from the flyer, e.g. "3-Day Intensive Workshop" */
+  format: string;
   theme: string;
   startDate: string; // ISO date, e.g. "2026-10-26"
   endDate: string;
+  days: number;
   dailyTime: string;
   ages: string;
-  price: number; // full week
+  ageMin: number;
+  ageMax: number;
+  venue: VenueKey;
+  price: number; // whole course, per child
   dayPrice?: number;
+  /** Places available per child-seat (used by the booking system) */
+  capacity: number;
   earlyBird?: { price: number; until: string };
   siblingDiscount?: string;
   bring: string[];
@@ -82,8 +96,28 @@ export type Faq = {
   category: "General" | "Classes" | "Camps" | "Shows" | "Safety";
 };
 
-export type Term = {
+export type VenueKey = "ashVillageHall" | "canterburyAcademy";
+
+export type Workshop = {
+  id: string;
   name: string;
+  theme: string;
+  date: string;
+  time: string;
+  ages: string;
+  ageMin: number;
+  ageMax: number;
+  venue: VenueKey;
+  price: number;
+  capacity: number;
+  tone: Tone;
+};
+
+export type Term = {
+  id: string;
+  name: string;
+  /** What the term's classes focus on (from the 2026–27 flyer) */
+  focus: string;
   start: string;
   end: string;
   halfTerm: { start: string; end: string };

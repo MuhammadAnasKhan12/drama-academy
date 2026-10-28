@@ -7,8 +7,8 @@ const reasons = [
   { Icon: Users, title: "Friendships for life", text: "Teamwork is at the heart of everything we do. Children leave with a gang of creative friends.", tone: "bg-teal text-ink" },
   { Icon: Palette, title: "Creativity unleashed", text: "Imagination is a muscle. We give it a proper workout with stories, characters and play.", tone: "bg-spotlight text-ink" },
   { Icon: ShieldCheck, title: "DBS-checked teachers", text: "Every teacher holds an enhanced DBS check and annual safeguarding training. Most are first-aid trained.", tone: "bg-blue text-paper" },
-  { Icon: BadgeCheck, title: "Small groups", text: "Never more than 16 children per class (12 for Mini Stars), so everyone is seen, heard and supported.", tone: "bg-magenta text-paper" },
-  { Icon: Drama, title: "Real stage experience", text: "Proper productions in a real theatre, with costumes, lights and an audience cheering them on.", tone: "bg-teal text-ink" },
+  { Icon: BadgeCheck, title: "Small groups", text: "Small, friendly groups, so every child is seen, heard and supported.", tone: "bg-magenta text-paper" },
+  { Icon: Drama, title: "Real stage experience", text: "Live performances at the end of the autumn and summer terms, and a showcase at every holiday club.", tone: "bg-teal text-ink" },
 ];
 
 export function WhyParents() {

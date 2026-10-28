@@ -9,6 +9,7 @@ export default [
   route("gallery", "routes/gallery.tsx"),
   route("parents", "routes/parents.tsx"),
   route("book", "routes/book.tsx"),
+  route("book/confirmation", "routes/book.confirmation.tsx"),
   route("privacy", "routes/privacy.tsx"),
   route("safeguarding", "routes/safeguarding.tsx"),
   route("terms", "routes/terms.tsx"),

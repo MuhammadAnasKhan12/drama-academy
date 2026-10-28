@@ -21,7 +21,7 @@ export function Footer() {
             <Logo />
           </Link>
           <p className="mt-12 max-w-xs">
-            Kids drama classes, shows and holiday camps in Canterbury, Kent — for ages {site.ages.min}–{site.ages.max}.
+            Kids drama classes, performances and holiday clubs in Canterbury, Kent — for ages {site.ages.min}–{site.ages.max}.
           </p>
           <p className="mt-4 inline-flex items-center gap-2 rounded-full bg-stage-2 px-3 py-1.5 text-sm font-bold text-cream ring-1 ring-white/10">
             <ShieldCheck className="size-4 text-teal" /> All staff enhanced DBS-checked
@@ -36,7 +36,7 @@ export function Footer() {
                 <Link to={n.to} className="hover:text-spotlight">{n.label}</Link>
               </li>
             ))}
-            <li><Link to="/book" className="hover:text-spotlight">Book a Free Trial</Link></li>
+            <li><Link to="/book" className="hover:text-spotlight">Book now</Link></li>
           </ul>
         </nav>
 
@@ -56,7 +56,11 @@ export function Footer() {
           <address className="space-y-3 not-italic">
             <p className="flex gap-3">
               <MapPin className="mt-1 size-4 shrink-0 text-teal" />
-              <span>{site.venue.name}<br />{site.venue.street}, {site.venue.town} {site.venue.postcode}</span>
+              <span>
+                <strong className="text-cream">Weekly class:</strong> {site.venues.ashVillageHall.name}, {site.venues.ashVillageHall.town}
+                <br />
+                <strong className="text-cream">Holiday clubs:</strong> {site.venues.canterburyAcademy.name}, {site.venues.canterburyAcademy.street}, {site.venues.canterburyAcademy.postcode}
+              </span>
             </p>
             <a href={site.contact.phoneHref} className="flex items-center gap-3 hover:text-spotlight">
               <Phone className="size-4 text-teal" /> {site.contact.phone}

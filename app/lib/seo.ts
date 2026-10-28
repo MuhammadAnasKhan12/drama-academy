@@ -1,5 +1,6 @@
 import type { MetaDescriptor } from "react-router";
-import { site } from "./site";
+import type { VenueKey } from "~/data/types";
+import { mainVenue, site, type Venue } from "./site";
 
 type SeoInput = {
   title: string;
@@ -30,14 +31,14 @@ export function seo({ title, description, path, image = "/og-image.jpg", jsonLd 
   ];
 }
 
-const address = {
+const postalAddress = (v: Venue) => ({
   "@type": "PostalAddress",
-  streetAddress: site.venue.street,
-  addressLocality: site.venue.town,
-  addressRegion: site.venue.county,
-  postalCode: site.venue.postcode,
+  streetAddress: v.street,
+  addressLocality: v.town,
+  addressRegion: v.county,
+  postalCode: v.postcode,
   addressCountry: "GB",
-};
+});
 
 export const organisationLd = {
   "@context": "https://schema.org",
@@ -45,19 +46,22 @@ export const organisationLd = {
   "@id": `${site.url}/#organisation`,
   name: site.name,
   description:
-    "Kids drama classes in Canterbury, Kent — weekly classes, stage shows and holiday camps for ages 4–16.",
+    "Kids drama classes in Canterbury, Kent — a weekly Wednesday class, end-of-term performances and holiday clubs for ages 4–11.",
   url: site.url,
   logo: `${site.url}/logo.png`,
   image: `${site.url}/og-image.jpg`,
   telephone: site.contact.phone,
   email: site.contact.email,
-  address,
-  geo: { "@type": "GeoCoordinates", latitude: site.venue.geo.lat, longitude: site.venue.geo.lng },
+  address: postalAddress(mainVenue),
+  geo: { "@type": "GeoCoordinates", latitude: mainVenue.geo.lat, longitude: mainVenue.geo.lng },
   areaServed: ["Canterbury", "Whitstable", "Herne Bay", "Faversham", "Kent"],
   sameAs: [site.contact.instagram, site.contact.facebook],
 };
 
-export const venueLd = { "@type": "Place", name: site.venue.name, address };
+export const venueLd = (key: VenueKey) => {
+  const v = site.venues[key];
+  return { "@type": "Place", name: v.name, address: postalAddress(v) };
+};
 
 export const ukDate = (iso: string, opts: Intl.DateTimeFormatOptions = { day: "numeric", month: "long", year: "numeric" }) =>
   new Date(iso).toLocaleDateString("en-GB", { ...opts, timeZone: "Europe/London" });

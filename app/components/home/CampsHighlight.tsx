@@ -20,7 +20,7 @@ const range = (a: string, b: string) =>
 export function CampsHighlight() {
   const now = useNow();
   const [featured, ...rest] = useMemo(() => upcomingCamps(now), [now]);
-  const prefill = useBookingStore((s) => s.prefill);
+  const addItem = useBookingStore((s) => s.addItem);
   const navigate = useNavigate();
   if (!featured) return null;
 
@@ -35,13 +35,13 @@ export function CampsHighlight() {
 
       <div className="container-site relative grid items-center gap-12 lg:grid-cols-2">
         <div>
-          <p className="eyebrow mb-3 text-ink">Holiday camps</p>
+          <p className="eyebrow mb-3 text-ink">Holiday clubs</p>
           <SplitHeading className="text-h1 text-ink">
             <span id="camps-title">School’s out. Showtime’s in!</span>
           </SplitHeading>
           <p className="mt-5 max-w-xl text-lead text-ink/80">
-            Action-packed drama weeks every half-term, Easter and summer. New friends, games, crafts and songs — all ending in a
-            mini showcase for families on Friday afternoon.
+            Running every holiday except Christmas: 3-day half-term intensives and 5-day Easter and summer workshops at
+            Canterbury Academy. From £25 a day, each ending in a showcase where every child gets to shine.
           </p>
 
           <Reveal variant="pop" className="mt-8">
@@ -49,16 +49,16 @@ export function CampsHighlight() {
               <span className="absolute -top-4 right-6 rotate-3 rounded-full bg-magenta px-4 py-1.5 font-display text-paper shadow-pop-sm">
                 Next up!
               </span>
-              <p className="eyebrow text-magenta-deep">{featured.season} camp · Ages {featured.ages}</p>
+              <p className="eyebrow text-magenta-deep">{featured.format} · Ages {featured.ages}</p>
               <h3 className="mt-1 text-h3">{featured.name}</h3>
               <p className="mt-1 text-ink-soft">{featured.theme}</p>
               <ul className="mt-5 grid gap-2 font-bold sm:grid-cols-2">
                 <li className="flex items-center gap-2"><CalendarDays className="size-4 text-teal-deep" aria-hidden="true" />{range(featured.startDate, featured.endDate)}</li>
-                <li className="flex items-center gap-2"><Clock className="size-4 text-teal-deep" aria-hidden="true" />{featured.dailyTime} daily</li>
+                <li className="flex items-center gap-2"><Clock className="size-4 text-teal-deep" aria-hidden="true" />{featured.dailyTime}</li>
                 <li className="flex items-center gap-2"><Users className="size-4 text-teal-deep" aria-hidden="true" />Ages {featured.ages}</li>
                 <li className="flex items-center gap-2">
                   <Sparkle className="size-4 text-teal-deep" aria-hidden="true" />
-                  {gbp(featured.price)} week{featured.dayPrice ? ` · ${gbp(featured.dayPrice)} day` : ""}
+                  {gbp(featured.price)} for {featured.days} days{featured.dayPrice ? ` (${gbp(featured.dayPrice)}/day)` : ""}
                 </li>
               </ul>
               {(earlyBird || featured.siblingDiscount) && (
@@ -73,11 +73,11 @@ export function CampsHighlight() {
               <div className="mt-6 flex flex-wrap gap-3">
                 <Button
                   onClick={() => {
-                    prefill("camp", featured.id);
+                    addItem(`club:${featured.id}`);
                     navigate("/book");
                   }}
                 >
-                  Book this camp
+                  Book this club
                 </Button>
                 <ButtonLink to="/holiday-camps" variant="ghost-dark" icon={<ArrowRight className="size-4" />}>
                   What’s the week like?
@@ -99,7 +99,7 @@ export function CampsHighlight() {
 
         <div className="relative mx-auto aspect-square w-full max-w-md lg:max-w-lg">
           <Parallax speed={-0.4} className="absolute top-0 left-0 h-[72%] w-[66%]">
-            <ImageReveal picture={photos[featured.photo]} alt="Children enjoying a Drama Kids holiday camp activity" sizes="(min-width: 1024px) 26rem, 62vw" className="h-full rounded-blob shadow-pop" />
+            <ImageReveal picture={photos[featured.photo]} alt="Children enjoying a Drama Kids holiday club activity" sizes="(min-width: 1024px) 26rem, 62vw" className="h-full rounded-blob shadow-pop" />
           </Parallax>
           <Parallax speed={0.5} className="absolute right-0 bottom-0 h-[46%] w-[58%]">
             <ImageReveal picture={photos.outingGroup} alt="A group of children in hi-vis vests on a camp outing with their leader" sizes="(min-width: 1024px) 22rem, 54vw" from="right" className="h-full rounded-blob shadow-pop ring-8 ring-teal" />

@@ -90,7 +90,9 @@ export function TicketCard({ show }: { show: Show }) {
                 Tickets from {gbp(show.priceFrom)}
               </a>
             ) : (
-              <p className="font-bold text-ink-soft">Tickets on sale soon · from {gbp(show.priceFrom)}</p>
+              <p className="font-bold text-ink-soft">
+                {show.priceFrom > 0 ? `Tickets on sale soon · from ${gbp(show.priceFrom)}` : "Family details to follow"}
+              </p>
             )}
             <button
               type="button"
