@@ -21,8 +21,14 @@
   // Every 15 minutes: release places held by payments that were never completed
   "triggers": { "crons": ["*/15 * * * *"] },
 
-  // The API's address on the club's domain (the domain must be active on Cloudflare first)
-  "routes": [{ "pattern": "api.dramakidscanterbury.co.uk", "custom_domain": true }],
+  // The API's addresses on the club's domain (the domain must be active on Cloudflare first).
+  // The website calls /api on its own address, so the admin's Cloudflare Access sign-in cookie
+  // is sent with admin requests. api.… stays for the Stripe webhook.
+  "routes": [
+    { "pattern": "api.dramakidscanterbury.co.uk", "custom_domain": true },
+    { "pattern": "dramakidscanterbury.co.uk/api/*", "zone_name": "dramakidscanterbury.co.uk" },
+    { "pattern": "www.dramakidscanterbury.co.uk/api/*", "zone_name": "dramakidscanterbury.co.uk" }
+  ],
 
   // Non-secret settings. Secrets (Stripe, Resend) go in .dev.vars locally and `wrangler secret put` in production.
   "vars": {
