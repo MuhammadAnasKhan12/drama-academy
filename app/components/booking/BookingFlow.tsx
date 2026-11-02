@@ -1,11 +1,12 @@
-import { useElements } from "@stripe/react-stripe-js";
+import { useElements, useStripe } from "@stripe/react-stripe-js";
 import { ArrowLeft, ArrowRight, Check, Loader2, Lock } from "lucide-react";
 import { useEffect, useMemo, useRef } from "react";
 import { useNavigate } from "react-router";
 import { Button } from "~/components/ui/Button";
-import { startCheckout, type BookingPayload } from "~/lib/booking/api";
+import { isDemoMode, startCheckout, type BookingPayload } from "~/lib/booking/api";
 import { money } from "~/lib/booking/catalogue";
 import { priceLines, totalPence } from "~/lib/booking/pricing";
+import { stripeKey } from "~/lib/stripe";
 import { STEPS, useBookingStore, type Step } from "~/stores/booking";
 import { BookingSummary } from "./BookingSummary";
 import { StepChildren } from "./StepChildren";
@@ -29,6 +30,7 @@ export function BookingFlow() {
   const { catalogue, byId, places } = useCatalogue();
   const navigate = useNavigate();
   const elements = useElements();
+  const stripe = useStripe();
   const top = useRef<HTMLDivElement>(null);
   const first = useRef(true);
 
@@ -63,7 +65,12 @@ export function BookingFlow() {
   const pay = async () => {
     if (!validate(3, catalogue)) return focusFirstError();
     const s = useBookingStore.getState();
-    // Stripe checks the card / wallet details first (only when the real Payment Element is showing)
+    // Live mode needs the Stripe card form (publishable key) — never create a payment we can't confirm
+    if (!isDemoMode() && (!stripeKey || !stripe || !elements)) {
+      s.setStatus("error", stripeKey ? "The payment form is still loading — please try again." : "Payments aren't set up yet: VITE_STRIPE_PUBLISHABLE_KEY is missing.");
+      return;
+    }
+    // Stripe checks the card details first (only when the real card form is showing)
     if (elements) {
       const { error } = await elements.submit();
       if (error) {
@@ -93,18 +100,37 @@ export function BookingFlow() {
     s.setStatus("submitting");
     try {
       const result = await startCheckout(payload);
-      if (result.mode === "redirect") {
-        window.location.assign(result.checkoutUrl);
-        return;
-      }
-      s.complete({
+      const confirmation = {
         reference: result.reference,
         email: payload.parent.email,
         lines: lines.map((l) => ({ child: l.childName, item: `${l.item.title} (${l.item.when})`, price: money(l.pence) })),
         total: money(total),
-        demo: true,
+        demo: result.mode === "demo",
+      };
+
+      if (result.mode === "demo") {
+        s.complete(confirmation);
+        navigate("/book/confirmation");
+        return;
+      }
+
+      // Kept in session storage in case the bank's security check redirects away and back
+      s.stashConfirmation(confirmation);
+      const returnUrl = `${window.location.origin}/book/confirmation?ref=${encodeURIComponent(result.reference)}`;
+      const { error, paymentIntent } = await stripe!.confirmPayment({
+        elements: elements!,
+        clientSecret: result.clientSecret,
+        confirmParams: { return_url: returnUrl },
+        redirect: "if_required",
       });
-      navigate("/book/confirmation");
+      if (error) {
+        // Card declined, wrong CVC etc. Places for this attempt are released by the server.
+        s.setStatus("error", error.message ?? "Your payment didn't go through. Please check your card details and try again.");
+        return;
+      }
+      const outcome = paymentIntent.status === "succeeded" ? "succeeded" : "processing";
+      if (outcome === "succeeded") s.clearBasket();
+      navigate(`/book/confirmation?ref=${encodeURIComponent(result.reference)}&payment_intent=${paymentIntent.id}&redirect_status=${outcome}`);
     } catch (err) {
       s.setStatus("error", err instanceof Error ? err.message : "Something went wrong. Please try again.");
     }

@@ -1,0 +1,9 @@
+# Copy to api/.dev.vars for local development. NEVER commit .dev.vars.
+# Stripe secret or restricted key (test mode): needs PaymentIntents (write) and Webhook endpoints (read) permissions
+STRIPE_SECRET_KEY=rk_test_or_sk_test_...
+# Printed by `stripe listen --forward-to localhost:8787/api/stripe/webhook`
+STRIPE_WEBHOOK_SECRET=whsec_...
+# Optional locally: without it, emails are printed to the terminal instead of sent
+RESEND_API_KEY=
+# Local only: skips Cloudflare Access for /api/admin and acts as this email
+ADMIN_DEV_EMAIL=admin@localhost

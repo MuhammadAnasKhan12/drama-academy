@@ -18,7 +18,7 @@ export function StepParent({ errors }: { errors: Errors }) {
           <TextField label="First name" autoComplete="given-name" {...f("firstName")} />
           <TextField label="Last name" autoComplete="family-name" {...f("lastName")} />
           <TextField label="Mobile number" type="tel" autoComplete="tel" inputMode="tel" {...f("phone")} />
-          <TextField label="Email" type="email" autoComplete="email" hint="Your booking confirmation goes here." {...f("email")} />
+          <TextField label="Email" type="email" autoComplete="email" hint="So we can contact you about the booking." {...f("email")} />
         </div>
       </section>
 

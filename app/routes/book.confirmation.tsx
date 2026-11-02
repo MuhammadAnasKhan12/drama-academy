@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useLocation } from "react-router";
 import { Sparkles } from "~/components/anim/Sparkles";
 import { ButtonLink } from "~/components/ui/Button";
+import { getBookingStatus, isDemoMode, type ServerBookingStatus } from "~/lib/booking/api";
 import { site } from "~/lib/site";
 import { useBookingStore } from "~/stores/booking";
 
@@ -12,6 +13,8 @@ export const meta = () => [{ title: `Your booking | ${site.name}` }, { name: "ro
  * The page parents land on after paying. Stripe adds `redirect_status` to the URL when it sends
  * someone back (after 3-D Secure or a bank redirect):
  *   succeeded (default) · processing · failed / requires_payment_method
+ * With the API connected, the booking's real status is fetched from the server (which only marks it
+ * paid when Stripe's signed webhook arrives) — the URL alone never confirms a booking.
  * In demo mode the booking details come from the booking store.
  */
 type Outcome = "succeeded" | "processing" | "failed";
@@ -26,12 +29,53 @@ export default function BookingConfirmation() {
   const [state, setState] = useState<{ outcome: Outcome; ref: string | null } | null>(null);
   useEffect(() => {
     const params = new URLSearchParams(search);
-    setState({ outcome: readOutcome(params.get("redirect_status")), ref: params.get("ref") });
+    const ref = params.get("ref");
+    const pi = params.get("payment_intent");
+    const fromUrl = readOutcome(params.get("redirect_status"));
+
+    // Demo mode, or no payment to look up: trust the page's own outcome
+    if (isDemoMode() || !ref || !pi) {
+      setState({ outcome: fromUrl, ref });
+      return;
+    }
+    if (fromUrl === "failed") {
+      setState({ outcome: "failed", ref });
+      return;
+    }
+
+    // Ask the server. Stripe's webhook can take a few seconds, so check again a few times.
+    let cancelled = false;
+    const toOutcome = (s: ServerBookingStatus): Outcome | null =>
+      s === "paid" ? "succeeded" : s === "failed" || s === "cancelled" || s === "expired" ? "failed" : null;
+    (async () => {
+      for (let attempt = 0; attempt < 6 && !cancelled; attempt++) {
+        try {
+          const outcome = toOutcome(await getBookingStatus(ref, pi));
+          if (outcome) {
+            if (outcome === "succeeded") useBookingStore.getState().clearBasket();
+            return !cancelled && setState({ outcome, ref });
+          }
+        } catch {
+          /* keep trying */
+        }
+        await new Promise((r) => setTimeout(r, 2000));
+      }
+      // Still pending: the bank is taking its time — the parent gets an email when it completes
+      if (!cancelled) setState({ outcome: "processing", ref });
+    })();
+    return () => {
+      cancelled = true;
+    };
   }, [search]);
 
-  if (!state) return <section aria-busy="true" className="min-h-[100svh] bg-stage" />;
+  if (!state)
+    return (
+      <section aria-busy="true" className="grid min-h-[100svh] place-items-center bg-stage text-mist">
+        <p className="animate-pulse font-bold">Checking your booking…</p>
+      </section>
+    );
   const { outcome } = state;
-  const reference = confirmation?.reference ?? state.ref;
+  const reference = state.ref ?? confirmation?.reference ?? null;
 
   return (
     <section className="stage-texture relative overflow-hidden bg-stage pt-[calc(var(--spacing-nav)+3rem)] pb-24">
@@ -41,7 +85,7 @@ export default function BookingConfirmation() {
         {outcome === "processing" && <Processing reference={reference} />}
         {outcome === "failed" && <Failed />}
 
-        {outcome === "succeeded" && confirmation && (
+        {outcome === "succeeded" && confirmation && confirmation.reference === reference && (
           <div className="mt-8 rounded-card bg-cream p-6 text-ink">
             <h2 className="font-display text-h4">What you booked</h2>
             <ul className="mt-3 divide-y divide-line">
@@ -90,7 +134,7 @@ function Succeeded({ reference }: { reference: string | null }) {
         )}
         {confirmation?.email && (
           <>
-            {" "}A receipt and confirmation are on their way to <strong className="text-cream">{confirmation.email}</strong>.
+            {" "}Please keep it safe — it’s how we find your booking if you get in touch.
           </>
         )}
       </p>
@@ -101,7 +145,7 @@ function Succeeded({ reference }: { reference: string | null }) {
       )}
       <p className="mt-6 flex gap-3 text-mist">
         <CalendarCheck className="size-5 shrink-0 text-teal" aria-hidden="true" />
-        We’ll email final details — times, what to bring and venue information — before your child’s first session.
+        We’ll be in touch with final details — times, what to bring and venue information — before your child’s first session.
       </p>
       <div className="mt-8 flex flex-wrap gap-4">
         <ButtonLink to="/book">Book something else</ButtonLink>
@@ -118,10 +162,10 @@ function Processing({ reference }: { reference: string | null }) {
       <p className="eyebrow mt-5 text-spotlight">Payment processing</p>
       <h1 className="mt-2 text-h1 text-cream">Nearly there…</h1>
       <p className="mt-4 text-lead text-mist">
-        Your bank is still confirming the payment. Your places are being held, and we’ll email you as soon as it’s complete — usually within a few
+        Your bank is still confirming the payment. Your places are being held, and the booking will be confirmed automatically once it’s complete — usually within a few
         minutes.{reference && <> Your reference is <strong className="text-cream">{reference}</strong>.</>}
       </p>
-      <p className="mt-4 text-mist">There’s no need to pay again. If you don’t hear from us within a day, please get in touch.</p>
+      <p className="mt-4 text-mist">There’s no need to pay again. If it still isn’t confirmed after a day, please get in touch with your reference.</p>
       <div className="mt-8 flex flex-wrap gap-4">
         <ButtonLink to="/" variant="ghost-light">Back to the home page</ButtonLink>
       </div>

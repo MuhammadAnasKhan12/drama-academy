@@ -1,6 +1,7 @@
 import { create } from "zustand";
+import type { GalleryCategory } from "~/data/gallery";
 
-export type GalleryFilter = "All" | "Classes" | "Camps" | "Shows";
+export type GalleryFilter = "All" | GalleryCategory;
 
 type GalleryState = {
   filter: GalleryFilter;

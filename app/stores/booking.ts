@@ -74,6 +74,10 @@ type BookingState = {
   /** Validates one step against the current catalogue; returns true when it's OK to continue */
   validate: (step: Step, catalogue: BookableItem[]) => boolean;
   setStatus: (status: SubmitStatus, submitError?: string) => void;
+  /** Save the confirmation details before paying (survives a redirect to the bank's check) */
+  stashConfirmation: (confirmation: NonNullable<BookingState["confirmation"]>) => void;
+  /** Payment succeeded: empty the basket (parent details are kept for next time this session) */
+  clearBasket: () => void;
   complete: (confirmation: NonNullable<BookingState["confirmation"]>) => void;
   reset: () => void;
 };
@@ -189,8 +193,12 @@ export const useBookingStore = create<BookingState>()(
         return Object.keys(errors).length === 0;
       },
       setStatus: (status, submitError = "") => set({ status, submitError }),
-      complete: (confirmation) =>
-        set({ confirmation, step: 0, selected: [], children: [newChild()], agreeTerms: false, errors: {}, status: "idle", submitError: "" }),
+      stashConfirmation: (confirmation) => set({ confirmation }),
+      clearBasket: () => set({ step: 0, selected: [], children: [newChild()], agreeTerms: false, errors: {}, status: "idle", submitError: "" }),
+      complete: (confirmation) => {
+        get().stashConfirmation(confirmation);
+        get().clearBasket();
+      },
       reset: () => set({ step: 0, selected: [], children: [newChild()], parent: emptyParent, agreeTerms: false, errors: {}, status: "idle", submitError: "" }),
     }),
     {

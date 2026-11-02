@@ -23,7 +23,6 @@ export function StripeProvider({ children }: { children: ReactNode }) {
         currency: "gbp",
         appearance: stripeAppearance,
         fonts: stripeFonts,
-        paymentMethodCreation: "manual",
         // Card payments only — no wallets or other methods
         allowedPaymentMethodTypes: ["card"],
       }}
@@ -149,7 +148,8 @@ function PaymentPreview() {
 function PreviewNote() {
   return (
     <p className="mt-3 rounded-chip bg-spotlight/20 p-3 text-sm text-ink">
-      <strong>Preview:</strong> add a Stripe publishable test key (<code>VITE_STRIPE_PUBLISHABLE_KEY</code>) to show the real Stripe card form here.
+      <strong>Preview only — this can’t be typed into.</strong> Add your Stripe publishable key (starts with <code>pk_test_</code>) as{" "}
+      <code>VITE_STRIPE_PUBLISHABLE_KEY</code> in <code>.env</code> and restart the site to show the real card form here.
     </p>
   );
 }

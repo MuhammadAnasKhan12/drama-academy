@@ -1,9 +1,9 @@
-import { ArrowRight } from "lucide-react";
-import { Link } from "react-router";
+import { Mail } from "lucide-react";
 import { Reveal } from "~/components/anim/Reveal";
 import { Accordion } from "~/components/ui/Accordion";
 import { SectionHeading } from "~/components/ui/SectionHeading";
 import { faqs } from "~/data/faqs";
+import { site } from "~/lib/site";
 
 export const homeFaqs = faqs.filter((f) => f.home);
 
@@ -17,9 +17,9 @@ export function FaqSection() {
             title={<span id="faq-title">Everything parents ask us</span>}
             intro="Can’t see your question? Drop us a message — we’re always happy to chat."
           />
-          <Link to="/parents" className="group mt-6 inline-flex items-center gap-2 font-bold text-magenta-deep hover:underline">
-            Visit the Parents’ Hub <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
-          </Link>
+          <a href={`mailto:${site.contact.email}`} className="mt-6 inline-flex items-center gap-2 font-bold text-magenta-deep hover:underline">
+            <Mail className="size-4" aria-hidden="true" /> {site.contact.email}
+          </a>
         </div>
         <Reveal>
           <Accordion items={homeFaqs} />

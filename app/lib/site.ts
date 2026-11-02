@@ -42,10 +42,11 @@ export const site = {
   },
 
   /**
-   * Booking & payments backend. null = demo mode: the booking flow works end to end
-   * but no payment is taken and nothing is saved (see app/lib/booking-api.ts).
+   * Booking & payments backend, from VITE_BOOKING_API_URL in .env (e.g. http://localhost:8787/api).
+   * Not set = demo mode: the booking flow works but no payment is taken and nothing is saved,
+   * and the admin shows sample data. (Read defensively: this file is also used by the API worker.)
    */
-  bookingApiUrl: null as string | null,
+  bookingApiUrl: ((import.meta as { env?: Record<string, string | undefined> }).env?.VITE_BOOKING_API_URL || null) as string | null,
 
   safeguardingLead: {
     name: "[PLACEHOLDER] Name",
@@ -58,11 +59,8 @@ export const site = {
 
 export const nav = [
   { label: "Classes", to: "/classes" },
-  { label: "Holiday Clubs", to: "/holiday-camps" },
   { label: "Shows", to: "/shows" },
   { label: "Gallery", to: "/gallery" },
-  { label: "About", to: "/about" },
-  { label: "Parents' Hub", to: "/parents" },
 ] as const;
 
 export type Venue = (typeof site.venues)[keyof typeof site.venues];

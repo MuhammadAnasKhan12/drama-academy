@@ -1,4 +1,4 @@
-import { isRouteErrorResponse, Links, Meta, Outlet, Scripts, ScrollRestoration } from "react-router";
+import { isRouteErrorResponse, Links, Meta, Outlet, Scripts, ScrollRestoration, useLocation } from "react-router";
 import type { Route } from "./+types/root";
 import "./app.css";
 import { CurtainIntro } from "./components/anim/CurtainIntro";
@@ -65,6 +65,9 @@ function Shell({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
+  // The admin area has its own layout — no curtains, smooth scroll or public navigation
+  const { pathname } = useLocation();
+  if (pathname === "/admin" || pathname.startsWith("/admin/")) return <Outlet />;
   return (
     <Shell>
       <Outlet />

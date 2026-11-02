@@ -28,7 +28,7 @@ export function nextEvent(now = new Date()): NextEvent | null {
   const campDate = camp ? new Date(`${camp.startDate}T09:00:00`) : null;
 
   if (camp && campDate && (!showDate || campDate <= showDate)) {
-    return { kind: "camp", title: camp.name, date: campDate, detail: `${camp.season} camp · ages ${camp.ages}`, to: "/holiday-camps" };
+    return { kind: "camp", title: camp.name, date: campDate, detail: `${camp.format} · ages ${camp.ages}`, to: "/book" };
   }
   if (show && showDate) {
     return { kind: "show", title: show.title, date: showDate, detail: show.cast, to: "/shows" };

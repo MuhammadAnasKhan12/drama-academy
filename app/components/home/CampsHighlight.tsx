@@ -1,4 +1,4 @@
-import { ArrowRight, BadgePercent, CalendarDays, Clock, Sparkle, Users } from "lucide-react";
+import { BadgePercent, CalendarDays, Clock, Sparkle, Users } from "lucide-react";
 import { useMemo } from "react";
 import { useNavigate } from "react-router";
 import { ImageReveal } from "~/components/anim/ImageReveal";
@@ -6,7 +6,7 @@ import { Parallax } from "~/components/anim/Parallax";
 import { Reveal } from "~/components/anim/Reveal";
 import { Sparkles } from "~/components/anim/Sparkles";
 import { SplitHeading } from "~/components/anim/SplitHeading";
-import { Button, ButtonLink } from "~/components/ui/Button";
+import { Button } from "~/components/ui/Button";
 import { photos } from "~/lib/images";
 import { gbp, ukDate } from "~/lib/seo";
 import { upcomingCamps } from "~/lib/upcoming";
@@ -79,9 +79,6 @@ export function CampsHighlight() {
                 >
                   Book this club
                 </Button>
-                <ButtonLink to="/holiday-camps" variant="ghost-dark" icon={<ArrowRight className="size-4" />}>
-                  What’s the week like?
-                </ButtonLink>
               </div>
             </article>
           </Reveal>

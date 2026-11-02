@@ -1,0 +1,37 @@
+// Cloudflare Worker for the Drama Kids booking API.
+// Local:  npm run api:dev        Deploy: npm run api:deploy   (see api/README.md)
+{
+  "$schema": "../node_modules/wrangler/config-schema.json",
+  "name": "drama-kids-api",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-10-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "observability": { "enabled": true },
+
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "drama-kids",
+      // Replace with the id printed by `npx wrangler d1 create drama-kids` before deploying
+      "database_id": "00000000-0000-0000-0000-000000000000",
+      "migrations_dir": "migrations"
+    }
+  ],
+
+  // Every 15 minutes: release places held by payments that were never completed
+  "triggers": { "crons": ["*/15 * * * *"] },
+
+  // Non-secret settings. Secrets (Stripe, Resend) go in .dev.vars locally and `wrangler secret put` in production.
+  "vars": {
+    // Comma-separated list of sites allowed to call the API
+    "SITE_ORIGIN": "http://localhost:5199",
+    // How long places are held while a parent pays
+    "HOLD_MINUTES": "30",
+    // Who booking notifications go to, and who emails are sent from (domain must be verified in Resend)
+    "ADMIN_NOTIFY_EMAIL": "canterbury@dramakids.co.uk",
+    "EMAIL_FROM": "Drama Kids Canterbury <bookings@example.com>",
+    // Cloudflare Access (protects /api/admin/*). Leave empty locally.
+    "ACCESS_TEAM_DOMAIN": "",
+    "ACCESS_AUD": ""
+  }
+}

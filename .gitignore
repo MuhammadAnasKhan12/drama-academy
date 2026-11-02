@@ -5,3 +5,5 @@ node_modules
 _reference
 .env*
 !.env.example
+.dev.vars
+.wrangler
