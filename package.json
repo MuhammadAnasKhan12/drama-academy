@@ -4,14 +4,17 @@
   "type": "module",
   "scripts": {
     "dev": "react-router dev",
-    "build": "react-router build",
+    "dev:all": "concurrently --kill-others-on-fail --names api,web --prefix-colors magenta,cyan \"npm:api:dev\" \"npm:dev:web\"",
+    "dev:web": "react-router dev --port 5199 --strictPort",
+    "build": "react-router build && node -e \"require('fs').copyFileSync('build/client/__spa-fallback.html','build/client/404.html')\"",
     "preview": "vite preview --outDir build/client",
     "typecheck": "react-router typegen && tsc && tsc -p api",
     "api:dev": "wrangler dev --config api/wrangler.jsonc --port 8787",
     "api:deploy": "wrangler deploy --config api/wrangler.jsonc",
     "api:db:generate": "drizzle-kit generate --config api/drizzle.config.ts",
     "api:db:migrate:local": "wrangler d1 migrations apply drama-kids --local --config api/wrangler.jsonc",
-    "api:db:migrate:remote": "wrangler d1 migrations apply drama-kids --remote --config api/wrangler.jsonc"
+    "api:db:migrate:remote": "wrangler d1 migrations apply drama-kids --remote --config api/wrangler.jsonc",
+    "dev:stripe": "stripe listen --forward-to localhost:8787/api/stripe/webhook"
   },
   "dependencies": {
     "@fontsource-variable/nunito": "^5.3.0",
@@ -43,6 +46,7 @@
     "@types/node": "^22.20.5",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
+    "concurrently": "^10.0.6",
     "drizzle-kit": "^0.31.11",
     "tailwindcss": "^4.3.3",
     "typescript": "^5.9.3",

@@ -13,7 +13,7 @@
       "binding": "DB",
       "database_name": "drama-kids",
       // Replace with the id printed by `npx wrangler d1 create drama-kids` before deploying
-      "database_id": "00000000-0000-0000-0000-000000000000",
+      "database_id": "6252caa0-fc0b-4c79-b8f3-ef8cd6655762",
       "migrations_dir": "migrations"
     }
   ],
@@ -21,10 +21,13 @@
   // Every 15 minutes: release places held by payments that were never completed
   "triggers": { "crons": ["*/15 * * * *"] },
 
+  // The API's address on the club's domain (the domain must be active on Cloudflare first)
+  "routes": [{ "pattern": "api.dramakidscanterbury.co.uk", "custom_domain": true }],
+
   // Non-secret settings. Secrets (Stripe, Resend) go in .dev.vars locally and `wrangler secret put` in production.
   "vars": {
     // Comma-separated list of sites allowed to call the API
-    "SITE_ORIGIN": "http://localhost:5199",
+    "SITE_ORIGIN": "http://localhost:5199,https://dramakidscanterbury.co.uk,https://www.dramakidscanterbury.co.uk",
     // How long places are held while a parent pays
     "HOLD_MINUTES": "30",
     // Who booking notifications go to, and who emails are sent from (domain must be verified in Resend)

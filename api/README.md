@@ -46,18 +46,20 @@ their places are released and their PaymentIntents cancelled.
    VITE_STRIPE_PUBLISHABLE_KEY=pk_test_...
    VITE_BOOKING_API_URL=http://localhost:8787/api
    ```
-3. **Database + API**
+3. **Database (first time only), then start everything**
    ```bash
    npm run api:db:migrate:local
-   npm run api:dev
+   npm run dev:all
    ```
-   and the website in another terminal: `npm run dev -- --port 5199`.
+   `dev:all` starts the API (http://localhost:8787, lines marked `[api]`) and the website
+   (http://localhost:5199, lines marked `[web]`) together; Ctrl+C stops both.
+   To run them separately instead: `npm run api:dev` and `npm run dev:web` in two terminals.
 4. **Stripe webhooks locally** — install the [Stripe CLI](https://docs.stripe.com/stripe-cli), then:
    ```bash
    stripe login
    stripe listen --forward-to localhost:8787/api/stripe/webhook --events payment_intent.succeeded,payment_intent.payment_failed,payment_intent.canceled,charge.refunded
    ```
-   Copy the `whsec_…` it prints into `STRIPE_WEBHOOK_SECRET` and restart `npm run api:dev`.
+   (or `npm run dev:stripe`). Copy the `whsec_…` it prints into `STRIPE_WEBHOOK_SECRET` and restart `npm run dev:all`.
 5. Book on http://localhost:5199/book with a [Stripe test card](https://docs.stripe.com/testing):
    `4242 4242 4242 4242`, any future date, any CVC. `4000 0025 0000 3155` tests the bank's 3-D Secure check,
    `4000 0000 0000 0002` a declined card. Then see it in http://localhost:5199/admin.
