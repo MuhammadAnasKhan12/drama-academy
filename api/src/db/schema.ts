@@ -102,3 +102,15 @@ export const webhookEvents = sqliteTable("webhook_events", {
   type: text("type").notNull(),
   receivedAt: text("received_at").notNull().default(now),
 });
+
+/** Failed admin sign-ins (per email and per IP), used to slow down password guessing */
+export const loginAttempts = sqliteTable(
+  "login_attempts",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    /** "email:…" or "ip:…" */
+    key: text("key").notNull(),
+    at: text("at").notNull().default(now),
+  },
+  (t) => [index("login_attempts_key_idx").on(t.key, t.at)],
+);

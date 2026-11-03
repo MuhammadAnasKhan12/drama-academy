@@ -5,5 +5,7 @@ STRIPE_SECRET_KEY=rk_test_or_sk_test_...
 STRIPE_WEBHOOK_SECRET=whsec_...
 # Optional locally: without it, emails are printed to the terminal instead of sent
 RESEND_API_KEY=
-# Local only: skips Cloudflare Access for /api/admin and acts as this email
-ADMIN_DEV_EMAIL=admin@localhost
+# Admin sign-in. Make an entry with `npm run admin:user` (several: join with commas)
+ADMIN_USERS=you@example.com:pbkdf2.100000....
+# Any random string of 32+ characters: `npm run admin:user -- --secret`
+SESSION_SECRET=

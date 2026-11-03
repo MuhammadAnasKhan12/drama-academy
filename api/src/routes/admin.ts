@@ -7,7 +7,7 @@ import { audit, loadBooking, loadBookings } from "../lib/bookings";
 import { closedItems } from "../lib/places";
 import { getStripe } from "../lib/stripe";
 import { adminStatusSchema, invalidRequest, itemOpenSchema } from "../lib/validation";
-import { requireAdmin } from "../middleware/access";
+import { requireAdmin } from "../middleware/session";
 
 const { bookings, itemSettings } = schema;
 

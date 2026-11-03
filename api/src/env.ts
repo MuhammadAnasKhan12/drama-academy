@@ -7,15 +7,15 @@ export type Env = {
   HOLD_MINUTES: string;
   ADMIN_NOTIFY_EMAIL: string;
   EMAIL_FROM: string;
-  ACCESS_TEAM_DOMAIN: string;
-  ACCESS_AUD: string;
 
   // secrets (.dev.vars locally, `wrangler secret put` in production)
   STRIPE_SECRET_KEY: string;
   STRIPE_WEBHOOK_SECRET: string;
   RESEND_API_KEY?: string;
-  /** Local development only: skip Cloudflare Access and act as this admin email */
-  ADMIN_DEV_EMAIL?: string;
+  /** Who may sign in to the admin: "email:hash,email:hash" (make entries with `npm run admin:user`) */
+  ADMIN_USERS?: string;
+  /** Random string (32+ characters) that signs admin session cookies */
+  SESSION_SECRET?: string;
 };
 
 export type AppEnv = { Bindings: Env; Variables: { adminEmail: string } };

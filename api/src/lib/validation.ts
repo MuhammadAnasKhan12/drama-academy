@@ -48,6 +48,7 @@ export type BookingInput = z.infer<typeof bookingSchema>;
 
 export const adminStatusSchema = z.object({ status: z.enum(["refunded", "cancelled"]) });
 export const itemOpenSchema = z.object({ open: z.boolean() });
+export const loginSchema = z.object({ email: z.string().trim().max(200), password: z.string().min(1).max(200) });
 
 /** zValidator hook: a short, safe error message (no schema internals) listing the fields to fix */
 export const invalidRequest = (result: { success: boolean; error?: { issues: { path: PropertyKey[] }[] } }, c: Context) => {

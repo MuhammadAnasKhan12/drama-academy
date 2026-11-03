@@ -5,13 +5,16 @@
  *   POST  /api/payment-intent                   hold places + create Stripe PaymentIntent
  *   GET   /api/bookings/:reference/status       status for the confirmation page
  *   POST  /api/stripe/webhook                   Stripe events (signature-verified)
- *   *     /api/admin/*                          admin screens (Cloudflare Access protected)
+ *   POST  /api/auth/login · logout, GET /me    admin sign-in (email + password, session cookie)
+ *   *     /api/admin/*                          admin screens (signed-in admins only)
  */
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { secureHeaders } from "hono/secure-headers";
+import { getDb } from "./db/client";
 import type { AppEnv, Env } from "./env";
 import { adminRoutes } from "./routes/admin";
+import { authRoutes, pruneLoginAttempts } from "./routes/auth";
 import { publicRoutes } from "./routes/public";
 import { expireHolds, webhookRoutes } from "./routes/webhook";
 
@@ -34,6 +37,7 @@ app.use("*", async (c, next) => {
 app.get("/health", (c) => c.json({ ok: true }));
 app.route("/", publicRoutes);
 app.route("/", webhookRoutes);
+app.route("/auth", authRoutes);
 app.route("/admin", adminRoutes);
 
 app.notFound((c) => c.json({ message: "Not found" }, 404));
@@ -44,5 +48,6 @@ app.onError((err, c) => {
 
 export default {
   fetch: app.fetch,
-  scheduled: (_controller: ScheduledController, env: Env, ctx: ExecutionContext) => ctx.waitUntil(expireHolds(env)),
+  scheduled: (_controller: ScheduledController, env: Env, ctx: ExecutionContext) =>
+    ctx.waitUntil(Promise.all([expireHolds(env), pruneLoginAttempts(getDb(env))])),
 } satisfies ExportedHandler<Env>;

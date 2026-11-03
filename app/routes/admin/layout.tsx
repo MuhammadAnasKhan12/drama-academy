@@ -1,10 +1,11 @@
 import { CalendarRange, ClipboardList, ExternalLink, LayoutDashboard, LogOut, Menu, ShieldCheck, Ticket, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, NavLink, Outlet, useLocation } from "react-router";
+import { SignIn } from "~/components/admin/SignIn";
 import { Logo } from "~/components/ui/Logo";
 import { isSampleData } from "~/lib/admin/api";
 import { site } from "~/lib/site";
-import { ADMIN_USER, useAdminStore } from "~/stores/admin";
+import { useAdminStore } from "~/stores/admin";
 
 export const meta = () => [{ title: `Admin | ${site.name}` }, { name: "robots", content: "noindex, nofollow" }];
 
@@ -17,18 +18,30 @@ const links = [
 
 /**
  * Admin shell: sidebar on desktop, slide-in menu on phones.
- * In production, Cloudflare Access protects every /admin URL before this page even loads.
+ * Shows the sign-in form until an admin signs in; the API also refuses admin requests without a session.
  */
 export default function AdminLayout() {
-  const load = useAdminStore((s) => s.load);
+  const { user, authChecked, checkSession, signOut, load } = useAdminStore();
   const toast = useAdminStore((s) => s.toast);
   const [menuOpen, setMenuOpen] = useState(false);
   const { pathname } = useLocation();
 
   useEffect(() => {
-    load();
-  }, [load]);
+    checkSession();
+  }, [checkSession]);
+  useEffect(() => {
+    if (user) load();
+  }, [user, load]);
   useEffect(() => setMenuOpen(false), [pathname]);
+
+  if (!authChecked) {
+    return (
+      <div className="grid min-h-screen place-items-center bg-stage" aria-busy="true">
+        <p className="font-bold text-mist">Loading…</p>
+      </div>
+    );
+  }
+  if (!user) return <SignIn />;
 
   const nav = (
     <nav aria-label="Admin" className="flex flex-1 flex-col gap-1 px-3">
@@ -53,12 +66,11 @@ export default function AdminLayout() {
         </Link>
         <p className="flex items-center gap-3 px-3 py-2 text-sm text-mist">
           <ShieldCheck className="size-5 shrink-0 text-teal" aria-hidden="true" />
-          <span className="min-w-0 truncate" title={ADMIN_USER}>{ADMIN_USER}</span>
+          <span className="min-w-0 truncate" title={user}>{user}</span>
         </p>
-        {/* Cloudflare Access sign-out URL */}
-        <a href="/cdn-cgi/access/logout" className="flex min-h-11 items-center gap-3 rounded-xl px-3 font-bold text-mist hover:bg-white/10 hover:text-cream">
+        <button type="button" onClick={signOut} className="flex min-h-11 w-full items-center gap-3 rounded-xl px-3 font-bold text-mist hover:bg-white/10 hover:text-cream">
           <LogOut className="size-5" aria-hidden="true" /> Sign out
-        </a>
+        </button>
       </div>
     </nav>
   );

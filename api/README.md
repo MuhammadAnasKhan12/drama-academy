@@ -8,8 +8,9 @@ api/
 ├── src/index.ts            routes, CORS, security headers, cron
 ├── src/routes/public.ts    availability · payment-intent · booking status
 ├── src/routes/webhook.ts   Stripe webhook (the only place a booking becomes "paid") + hold expiry
-├── src/routes/admin.ts     admin screens' data (protected by Cloudflare Access)
-├── src/middleware/access.ts  verifies the Cloudflare Access sign-in token
+├── src/routes/auth.ts      admin sign-in / sign-out (email + password, session cookie)
+├── src/routes/admin.ts     admin screens' data (signed-in admins only)
+├── src/middleware/session.ts  checks the admin session cookie
 ├── src/lib/                Stripe client, emails (Resend), validation, place counting
 ├── src/db/schema.ts        database tables → `npm run api:db:generate` makes migrations
 ├── migrations/             SQL applied to D1
@@ -27,6 +28,9 @@ code, so the price a parent sees and the price charged can never drift apart.
 | POST | `/api/payment-intent` | Re-checks items, ages, prices and places; holds the places; creates a Stripe PaymentIntent (card only) |
 | GET | `/api/bookings/:reference/status?payment_intent=pi_…` | Booking status for the confirmation page (needs both values) |
 | POST | `/api/stripe/webhook` | Signature-verified Stripe events: paid / failed / cancelled / refunded. On "paid" the academy gets a notification email (parents are not emailed) |
+| POST | `/api/auth/login` | `{ email, password }` → sets the admin session cookie (5 wrong tries per email / 20 per IP in 15 min, then blocked for a while) |
+| POST | `/api/auth/logout` | Clears the session cookie |
+| GET | `/api/auth/me` | The signed-in admin's email, or 401 |
 | GET | `/api/admin/bookings` | All bookings for the admin |
 | PATCH | `/api/admin/bookings/:id` | `{ "status": "refunded" \| "cancelled" }` |
 | GET / PATCH | `/api/admin/items`, `/api/admin/items/:id` | Close / reopen online booking for a club or term |
@@ -40,7 +44,9 @@ their places are released and their PaymentIntents cancelled.
    - `STRIPE_SECRET_KEY` — test secret (`sk_test_…`) or restricted key (`rk_test_…`) with **PaymentIntents: write**.
    - `STRIPE_WEBHOOK_SECRET` — from step 4.
    - `RESEND_API_KEY` — optional; used only for the academy's new-booking notification. Without it the email is printed in the terminal.
-   - `ADMIN_DEV_EMAIL` — any email; skips admin sign-in **on localhost only**.
+   - `ADMIN_USERS` — who may sign in to the admin. Run `npm run admin:user`, enter an email and password, and paste
+     the line it prints (several admins: join the lines with commas).
+   - `SESSION_SECRET` — any random string of 32+ characters (`npm run admin:user -- --secret` makes one).
 2. **Website settings** — in the project root `.env` (see `.env.example`):
    ```
    VITE_STRIPE_PUBLISHABLE_KEY=pk_test_...
@@ -79,25 +85,25 @@ You need a Cloudflare account and `npx wrangler login`.
 2. **Settings** in `api/wrangler.jsonc` → `vars`:
    - `SITE_ORIGIN` — your website address, e.g. `https://dramakidscanterbury.co.uk` (comma-separate several).
    - `EMAIL_FROM` — a sender on a domain verified in Resend.
-   - `ACCESS_TEAM_DOMAIN` / `ACCESS_AUD` — from step 5.
 3. **Secrets** (never in files):
    ```bash
    npx wrangler secret put STRIPE_SECRET_KEY --config api/wrangler.jsonc
    npx wrangler secret put STRIPE_WEBHOOK_SECRET --config api/wrangler.jsonc
    npx wrangler secret put RESEND_API_KEY --config api/wrangler.jsonc
+   npx wrangler secret put ADMIN_USERS --config api/wrangler.jsonc
+   npx wrangler secret put SESSION_SECRET --config api/wrangler.jsonc
    ```
-   Do **not** set `ADMIN_DEV_EMAIL` in production.
+   `ADMIN_USERS`: paste the line(s) from `npm run admin:user` (use a strong password).
+   `SESSION_SECRET`: paste the output of `npm run admin:user -- --secret`. Without both, admin sign-in refuses everyone.
 4. **Deploy** — `npm run api:deploy`. Note the URL (`https://drama-kids-api.<you>.workers.dev`), or add a
    route so the API lives at `https://yourdomain/api/*`.
 5. **Stripe webhook** — Stripe Dashboard → Developers → Webhooks → *Add endpoint*:
    `https://<api-address>/api/stripe/webhook`, events `payment_intent.succeeded`,
    `payment_intent.payment_failed`, `payment_intent.canceled`, `charge.refunded`.
    Put its signing secret into `STRIPE_WEBHOOK_SECRET` (step 3).
-6. **Admin sign-in (Cloudflare Access)** — Zero Trust → Access → Applications → *Self-hosted*:
-   protect **both** `yourdomain/admin*` and `<api-address>/api/admin/*`, with a policy allowing only the
-   client's email(s). Copy the team domain (`<team>.cloudflareaccess.com`) and the application's
-   **AUD tag** into `ACCESS_TEAM_DOMAIN` / `ACCESS_AUD`, then deploy again. Without these, admin routes
-   refuse every request.
+6. **Admin accounts** — to add someone, run `npm run admin:user` and set `ADMIN_USERS` again with all the entries
+   (comma-separated). To remove someone, set it again without their entry: they are signed out on their next click.
+   To sign everyone out, set a new `SESSION_SECRET`.
 7. **Website** — build with the live values in `.env` (`VITE_BOOKING_API_URL=https://<api-address>/api`,
    `VITE_STRIPE_PUBLISHABLE_KEY=pk_live_…` when going live) and deploy `build/client` to Cloudflare Pages.
    Serve `__spa-fallback.html` for unknown paths.
@@ -116,5 +122,6 @@ You need a Cloudflare account and `npx wrangler login`.
 - A booking is only marked paid by a **signature-verified** Stripe webhook; repeated events are ignored.
 - Secrets live in `.dev.vars` (git-ignored) locally and Wrangler secrets in production.
 - CORS allows only `SITE_ORIGIN`; all input is validated with Zod; queries are parameterised (Drizzle).
-- Admin routes verify the Cloudflare Access token (signature, issuer, audience) themselves, return no-store
-  headers, and log every action with the admin's email.
+- Admin sign-in: passwords are stored only as PBKDF2-SHA256 hashes in a secret; sessions are signed, HttpOnly, Secure,
+  SameSite=Strict cookies that last 12 hours; repeated wrong passwords are blocked for 15 minutes. Admin routes return
+  no-store headers and log every action with the admin's email.

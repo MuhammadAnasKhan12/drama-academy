@@ -22,7 +22,7 @@
   "triggers": { "crons": ["*/15 * * * *"] },
 
   // The API's addresses on the club's domain (the domain must be active on Cloudflare first).
-  // The website calls /api on its own address, so the admin's Cloudflare Access sign-in cookie
+  // The website calls /api on its own address, so the admin's sign-in cookie
   // is sent with admin requests. api.… stays for the Stripe webhook.
   "routes": [
     { "pattern": "api.dramakidscanterbury.co.uk", "custom_domain": true },
@@ -30,7 +30,7 @@
     { "pattern": "www.dramakidscanterbury.co.uk/api/*", "zone_name": "dramakidscanterbury.co.uk" }
   ],
 
-  // Non-secret settings. Secrets (Stripe, Resend) go in .dev.vars locally and `wrangler secret put` in production.
+  // Non-secret settings. Secrets (Stripe, Resend, admin sign-in) go in .dev.vars locally and `wrangler secret put` in production.
   "vars": {
     // Comma-separated list of sites allowed to call the API
     "SITE_ORIGIN": "http://localhost:5199,https://dramakidscanterbury.co.uk,https://www.dramakidscanterbury.co.uk",
@@ -38,9 +38,6 @@
     "HOLD_MINUTES": "30",
     // Who booking notifications go to, and who emails are sent from (domain must be verified in Resend)
     "ADMIN_NOTIFY_EMAIL": "canterbury@dramakids.co.uk",
-    "EMAIL_FROM": "Drama Kids Canterbury <bookings@example.com>",
-    // Cloudflare Access (protects /api/admin/*). Leave empty locally.
-    "ACCESS_TEAM_DOMAIN": "",
-    "ACCESS_AUD": ""
+    "EMAIL_FROM": "Drama Kids Canterbury <bookings@example.com>"
   }
 }
